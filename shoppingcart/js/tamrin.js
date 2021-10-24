@@ -6,6 +6,9 @@ eventListeners();
 
 function eventListeners() {
     courses.addEventListener("click", buyCourse)
+
+    //remove course from the cart
+    shoppingCartContent.addEventListener("click" , removeCourse)
 }
 
 
@@ -58,6 +61,13 @@ row.innerHTML = `
 `
 
 shoppingCartContent.appendChild(row)
-console.log(row)
-console.log(shoppingCartContent);
+// console.log(row)
+// console.log(shoppingCartContent);
+}
+
+//remove course from the DOM
+function removeCourse(e){
+    if(e.target.classList.contains("remove")){
+        console.log(e.target.parentElement.parentElement.remove());
+    }
 }
