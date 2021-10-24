@@ -68,6 +68,31 @@ row.innerHTML = `
 shoppingCartContent.appendChild(row)
 // console.log(row)
 // console.log(shoppingCartContent);
+
+saveToStorge(cInfo)
+}
+
+//add to localstorage
+function saveToStorge(course){
+    //get array of courses to the array of courses
+    let courses = getFromStorage()
+
+    //add the new course to the array of courses
+    courses.push(course)
+
+    localStorage.setItem("courses", JSON.stringify(courses))
+
+}
+
+//get content from Localstorage
+function getFromStorage(){
+    let courses;
+    if (localStorage.getItem("courses")){
+        courses = JSON.parse(localStorage.getItem("courses"))
+    } else {
+        courses = []
+    }
+    return courses
 }
 
 //remove course from the DOM
