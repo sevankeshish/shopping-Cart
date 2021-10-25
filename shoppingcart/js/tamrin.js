@@ -10,10 +10,13 @@ function eventListeners() {
     courses.addEventListener("click", buyCourse)
 
     //remove course from the cart
-    shoppingCartContent.addEventListener("click" , removeCourse)
+    shoppingCartContent.addEventListener("click", removeCourse)
 
     //remove all courses from the cart
     clearCartBtn.addEventListener("click", clearCart)
+
+    //show courses from storage when loaded
+    document.addEventListener("DOMContentLoaded", showCoursesOnLoad)
 }
 
 
@@ -46,13 +49,13 @@ function getCourseInfo(course) {
 }
 
 //adding the course to the cart
-function addToCart(cInfo){
+function addToCart(cInfo) {
 
-//create <tr< tag
-let row = document.createElement("tr")
+    //create <li. tag
+    let row = document.createElement("tr")
 
-//build HTML template
-row.innerHTML = `
+    //build HTML template
+    row.innerHTML = `
     <tr>
         <td>
             <img src= "${cInfo.image}" width = "100px">
@@ -65,15 +68,15 @@ row.innerHTML = `
     </tr>
 `
 
-shoppingCartContent.appendChild(row)
-// console.log(row)
-// console.log(shoppingCartContent);
+    shoppingCartContent.appendChild(row)
+    // console.log(row)
+    // console.log(shoppingCartContent);
 
-saveToStorge(cInfo)
+    saveToStorge(cInfo)
 }
 
 //add to localstorage
-function saveToStorge(course){
+function saveToStorge(course) {
     //get array of courses to the array of courses
     let courses = getFromStorage()
 
@@ -85,9 +88,9 @@ function saveToStorge(course){
 }
 
 //get content from Localstorage
-function getFromStorage(){
+function getFromStorage() {
     let courses;
-    if (localStorage.getItem("courses")){
+    if (localStorage.getItem("courses")) {
         courses = JSON.parse(localStorage.getItem("courses"))
     } else {
         courses = []
@@ -96,17 +99,75 @@ function getFromStorage(){
 }
 
 //remove course from the DOM
-function removeCourse(e){
-    if(e.target.classList.contains("remove")){
-        console.log(e.target.parentElement.parentElement.remove());
+function removeCourse(e) {
+    let course, courseId;
+
+    if (e.target.classList.contains("remove")) {
+        //delete one by one
+        // console.log(e.target.parentElement.parentElement.remove());
+        // console.log("yes");
+        e.target.parentElement.parentElement.remove()
+        course = e.target.parentElement.parentElement
+        courseId = course.querySelector("a").getAttribute("data-id")
     }
+
+    //remove course from LS
+    removeCourseLS(courseId)
+}
+
+//remove course from local storage 
+function removeCourseLS(id) {
+    let coursesLS = getFromStorage()
+
+    coursesLS.forEach(function (course, index) {
+        if (course.id === id) {
+            coursesLS.splice(index, 1)
+        }
+    });
+
+    localStorage.setItem("courses" , JSON.stringify(coursesLS))
 }
 
 //remove all courses from DOM
-function clearCart(e){
+function clearCart(e) {
     // shoppingCartContent.innerHTML = ""
 
-    while (shoppingCartContent.firstChild){
+    while (shoppingCartContent.firstChild) {
         shoppingCartContent.firstChild.remove()
     }
+
+    clearCartLS()
+}
+
+//clear all courses from Local Storage
+function clearCartLS() {
+    localStorage.clear()
+}
+
+//show courses when document loaded and add courses into the cart
+function showCoursesOnLoad() {
+    let coursesLs = getFromStorage();
+
+    //add courses into the cart
+    coursesLs.forEach(function (cInfo) {
+        //create <li. tag
+        let row = document.createElement("tr")
+
+        //build HTML template
+        row.innerHTML = `
+    <tr>
+        <td>
+            <img src= "${cInfo.image}" width = "100px">
+        </td>
+        <td>${cInfo.title}</td>
+        <td>${cInfo.price}</td>
+        <td>
+            <a class = "remove" href ="#" data-id ="${cInfo.id}">X</a>
+        </td>
+    </tr>
+`
+
+        shoppingCartContent.appendChild(row)
+        // console.log(row);
+    });
 }
